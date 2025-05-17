@@ -1,14 +1,14 @@
 import bpy
 
-from .instanceimport import ImportMtiFile
-from .partexport import ExportMtiFile
+from .mti_import import ImportMtiFile
+from .export import ExportMtiFile
 
 bl_info = {
     "name": "MetaInstancer",
     "description": "Import/Export MTI Data",
     "author": "Hedgeturd",
     "version": (1, 0, 0),
-    "blender": (4, 3, 0),
+    "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "warning": "",
     "wiki_url": "",
