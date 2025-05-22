@@ -10,12 +10,6 @@ from bpy.props import StringProperty
 from bpy.types import Operator
 from .convert import Header, Convert
 
-""" def get_type_from_particle_system(psys):
-    Extracts type from particle system name (e.g., '@TYPE(3)')
-    import re
-    match = re.search(r'@TYPE\((\d+)\)', psys.name)
-    return int(match.group(1)) if match else 0 """
-
 def get_type_from_particle_system(psys):
     """Extracts type(s) from particle system name and returns a random value or the first value."""
     match = re.search(r'@TYPE\(([\d,\s]+)\)', psys.name)
@@ -38,10 +32,6 @@ def get_particle_data():
     for psys in obj.particle_systems:
         for particle in psys.particles:
             posx, posy, posz = particle.location
-            
-            # Extract rotation (assuming rotation is stored in quaternion form)
-            #rotation = particle.rotation.to_euler()
-            #pitch, yaw, roll = rotation.x, rotation.y, rotation.z
 
             # Particle's rotation quaternion (includes normal alignment)
             normal_vector = particle.rotation @ mathutils.Vector((0, 0, 1))
@@ -77,10 +67,15 @@ class ExportMtiFile(Operator, ExportHelper):
 
     def export_to_hex(self, context):
         """Exports particle system data to a hex file."""
-        bpy.ops.object.mode_set(mode='PARTICLE_EDIT')
-        particles = get_particle_data()
-        if not particles:
-            return
+        try:
+            bpy.ops.object.mode_set(mode='PARTICLE_EDIT')
+            particles = get_particle_data()
+            if not particles:
+                self.report({'ERROR'}, f"No Hair Particles in Object.")
+                return {"CANCELLED"}
+        except Exception as e:
+            self.report({'ERROR'}, f"No valid mesh object selected. {str(e)}")
+            return {"CANCELLED"}
 
         instance_count = len(particles)
         instance_size = Header.INSTANCE_SIZE
@@ -108,7 +103,7 @@ class ExportMtiFile(Operator, ExportHelper):
 
                 # Write each instance (particle)
                 for particle in particles:
-                    print(particle)
+                    #print(particle)
                     posx, posy, posz, pitch, yaw, type = particle
                     
                     # Apply coordinate transformation
