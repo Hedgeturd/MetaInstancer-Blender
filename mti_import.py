@@ -79,8 +79,8 @@ class ImportMtiFile(Operator, ImportHelper):
     def import_mti(self, context):
         # Open the file once and process everything sequentially
         try:
-            with open(self.file_path, "rb") as f:
-                header = read_header(f, self.file_path)
+            with open(self.filepath, "rb") as f:
+                header = read_header(f, self.filepath)
 
                 # Move to the start of instance data
                 f.seek(header["instance_offset"])
